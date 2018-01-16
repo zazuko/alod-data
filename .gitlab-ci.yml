@@ -1,0 +1,40 @@
+image: node:8.9
+before_script:
+  - npm install
+
+variables:
+  ADMIN_PASSWORD: 'cinderella'
+  JVM_ARGS: '-Xmx2g'
+  FUSEKI_HOST: 'fuseki'
+
+services:
+  - name: stain/jena-fuseki
+    alias: fuseki
+
+
+# stages
+stages:
+- fetch
+- convert
+- post
+
+# jobs
+
+fetch_incidents_job:
+  stage: fetch
+  script:
+    - npm run fetch-incidents
+  artifacts:
+    paths:
+      - input/incidents.csv
+    expire_in: 30 minutes
+
+convert_job:
+  stage: convert
+  script:
+    - npm run convert
+    - npm run clean-incidents
+  artifacts:
+    paths:
+      - target/incidents-clean.nt
+    expire_in: 1 hour

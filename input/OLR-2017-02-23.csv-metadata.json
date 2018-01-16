@@ -1,0 +1,68 @@
+{
+  "@context": "http://www.w3.org/ns/csvw",
+  "url": "OLR-2017-02-23.csv",
+  "tableSchema": {
+    "columns": [
+      {
+        "titles": "VRZNG_ENHT_ID"
+      },
+      {
+        "titles": "SGNTR_CD"
+      },
+      {
+        "titles": "TITEL"
+      },
+      {
+        "titles": "DARIN_TXT"
+      },
+      {
+        "titles": "LEVEL_ID"
+      },
+      {
+        "titles": "LEVEL_TXT"
+      },
+      {
+        "titles": "ZT_RAUM_TXT"
+      },
+      {
+        "titles": "ABLIEFERUNG"
+      },
+      {
+        "titles": "AKTENZEICHEN"
+      },
+      {
+        "titles": "ENTSTEHUNGSZEITRAUM_ANM"
+      },
+      {
+        "titles": "ZUSATZKOMPONENTE"
+      },
+      {
+        "titles": "PARENT_ID"
+      },
+      {
+        "titles": "ANZ_BAND"
+      },
+      {
+        "titles": "FORM"
+      },
+      {
+        "titles": "VORGÄNGERBEHÖRDE"
+      },
+      {
+        "titles": "NACHFOLGERBEHÖRDE"
+      },
+      {
+        "titles": "LAND"
+      },
+      {
+        "titles": "FRÜHERES_AKTENZEICHEN"
+      },
+      {
+        "titles": "FORMAT"
+      },
+      {
+        "titles": "ABDECKUNG"
+      }
+    ]
+  }
+}
