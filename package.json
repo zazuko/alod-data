@@ -1,0 +1,25 @@
+{
+  "name": "alod-pipeline",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "barnard59": "git+https://github.com/zazuko/barnard59.git#master",
+    "gitlab-ci-validate": "^0.1.2",
+    "json": "^9.0.6",
+    "moment": "^2.20.1"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.2"
+  },
+  "scripts": {
+    "clean": "rm -rf target/*",
+    "convert": "mkdir -p target && node index.js",
+    "clean-incidents": "cat target/incidents.nt | sed '/_:/d' | sed '/<file/d' > target/incidents-clean.nt",
+    "post-incidents": "./scripts/lindas-post-dimensions.sh"
+  }
+}

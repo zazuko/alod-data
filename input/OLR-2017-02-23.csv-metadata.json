@@ -1,67 +1,91 @@
 {
   "@context": "http://www.w3.org/ns/csvw",
   "url": "OLR-2017-02-23.csv",
+  "dialect": {
+    "delimiter": ";"
+  },
   "tableSchema": {
+    "aboutUrl":"http://data.alod.ch/bar/id/archivalresource/{VRZNG_ENHT_ID}",
     "columns": [
       {
-        "titles": "VRZNG_ENHT_ID"
+        "titles": "VRZNG_ENHT_ID",
+        "propertyUrl": "http://www.w3.org/2004/02/skos/core#notation"
       },
       {
-        "titles": "SGNTR_CD"
+        "titles": "SGNTR_CD",
+        "suppressOutput":true
       },
       {
-        "titles": "TITEL"
+        "titles": "TITEL",
+        "propertyUrl": "http://www.ica.org/standards/RiC/ontology#title"
       },
       {
-        "titles": "DARIN_TXT"
+        "titles": "DARIN_TXT",
+        "suppressOutput":true
       },
       {
-        "titles": "LEVEL_ID"
+        "titles": "LEVEL_ID",
+        "suppressOutput":true
       },
       {
-        "titles": "LEVEL_TXT"
+        "titles": "LEVEL_TXT",
+        "suppressOutput":true
       },
       {
-        "titles": "ZT_RAUM_TXT"
+        "titles": "ZT_RAUM_TXT",
+        "suppressOutput":true
       },
       {
-        "titles": "ABLIEFERUNG"
+        "titles": "ABLIEFERUNG",
+        "suppressOutput":true
       },
       {
-        "titles": "AKTENZEICHEN"
+        "titles": "AKTENZEICHEN",
+        "suppressOutput":true
       },
       {
-        "titles": "ENTSTEHUNGSZEITRAUM_ANM"
+        "titles": "ENTSTEHUNGSZEITRAUM_ANM",
+        "suppressOutput":true
       },
       {
-        "titles": "ZUSATZKOMPONENTE"
+        "titles": "ZUSATZKOMPONENTE",
+        "suppressOutput":true
       },
       {
-        "titles": "PARENT_ID"
+        "titles": "PARENT_ID",
+        "suppressOutput":true
       },
       {
-        "titles": "ANZ_BAND"
+        "titles": "ANZ_BAND",
+        "suppressOutput":true
       },
       {
-        "titles": "FORM"
+        "titles": "FORM",
+        "suppressOutput":true
       },
       {
-        "titles": "VORGÄNGERBEHÖRDE"
+        "titles": "VORGÄNGERBEHÖRDE",
+        "suppressOutput":true
       },
       {
-        "titles": "NACHFOLGERBEHÖRDE"
+        "titles": "NACHFOLGERBEHÖRDE",
+        "suppressOutput":true
       },
       {
-        "titles": "LAND"
+        "titles": "LAND",
+        "suppressOutput":true
       },
       {
-        "titles": "FRÜHERES_AKTENZEICHEN"
+        "titles": "FRÜHERES_AKTENZEICHEN",
+        "suppressOutput":true
       },
       {
-        "titles": "FORMAT"
+        "titles": "FORMAT",
+        "suppressOutput":true
       },
       {
-        "titles": "ABDECKUNG"
+        "titles": "ABDECKUNG",
+        "suppressOutput":true
       }
     ]
   }
