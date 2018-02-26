@@ -21,7 +21,7 @@
       },
       {
         "titles": "DARIN_TXT",
-        "suppressOutput":true
+        "propertyUrl":  "http://www.ica.org/standards/RiC/ontology#scopeAndContent"
       },
       {
         "titles": "LEVEL_ID",
@@ -29,11 +29,11 @@
       },
       {
         "titles": "LEVEL_TXT",
-        "suppressOutput":true
+        "propertyUrl": "http://example.org/level"
       },
       {
         "titles": "ZT_RAUM_TXT",
-        "suppressOutput":true
+        "propertyUrl": "http://data.alod.ch/alod/legacyTimeRange"
       },
       {
         "titles": "ABLIEFERUNG",
@@ -49,11 +49,12 @@
       },
       {
         "titles": "ZUSATZKOMPONENTE",
-        "suppressOutput":true
+        "propertyUrl":  "http://www.ica.org/standards/RiC/ontology#scopeAndContent"
       },
       {
         "titles": "PARENT_ID",
-        "suppressOutput":true
+        "propertyUrl": "http://purl.org/dc/terms/relation",
+        "valueUrl": "http://data.alod.ch/bar/id/archivalresource/{PARENT_ID}"
       },
       {
         "titles": "ANZ_BAND",
@@ -86,6 +87,16 @@
       {
         "titles": "ABDECKUNG",
         "suppressOutput":true
+      },      
+      {
+        "virtual":true,
+        "propertyUrl":"http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "valueUrl":"http://www.ica.org/standards/RiC/ontology#RecordSet"
+      },      
+      {
+        "virtual":true,
+        "propertyUrl":"http://www.ica.org/standards/RiC/ontology#heldBy",
+        "valueUrl":"http://isil.ch/CH-000018-2"
       }
     ]
   }

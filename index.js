@@ -19,17 +19,16 @@ function convertCsvw (filename) {
         const predicate = quad.predicate
         const object = quad.object
 
+        return p.rdf.quad(subject, predicate, object)
       }))
       .pipe(p.ntriples.serialize())
       .pipe(p.file.write(filenameOutput)))
   })
 }
 
-
 const filenames = [
-  'OLR-2017-02-23.csv'
+  'OLR-2018-02-16.tab'
 ]
-
 
 p.run(() => {
   p.shell.mkdir('-p', 'target/')
