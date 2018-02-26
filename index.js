@@ -61,6 +61,10 @@ function convertCsvw (filename) {
             quads.push(
               p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(dateString, 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth'))
             )
+          } else if (dateString.startsWith('s.d.')) {
+            // s.d. (sine dato)
+          } else if (dateString.startsWith('keine Angabe')) {
+            // keine Angabe
           } else {
             console.log('Unparsed date: ' + dateString)
           }
