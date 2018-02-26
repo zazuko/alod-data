@@ -23,9 +23,12 @@ function convertCsvw (filename) {
           const dateString = object.value.trim()
 
           // regex patterns
-          const gYear = /^\d{4}$/
-          const gYear2gYear = /^(\d{4})\s*-\s*(\d{4})$/ // 2011-2019, 2011 - 2019
-          const date2date = /^(\d{4}\.\d{2}\.\d{2})\s*-\s*(\d{4}\.\d{2}\.\d{2})$/ // 2011-2019, 2011 - 2019
+          const gYear = /^\d{4}$/ // 2018
+          const gYearMonth = /^(\d{4}\.\d{2})$/ // 2010.09
+          const date = /^(\d{4}\.\d{2}\.\d{2})$/ // 2010.09.13
+          const gYear2gYear = /^(\d{4})\s*-\s*(\d{4})$/ // 2011-2019
+          const date2date = /^(\d{4}\.\d{2}\.\d{2})\s*-\s*(\d{4}\.\d{2}\.\d{2})$/ // 2010.09.13-2011.03.14
+          const gYearMonth2gYearMonth = /^(\d{4}\.\d{2})\s*-\s*(\d{4}\.\d{2})$/ // 1985.11-1986.04
 
           let found = []
 
@@ -43,6 +46,20 @@ function convertCsvw (filename) {
             quads.push(
               p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(found[1], 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date')),
               p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'), p.rdf.literal(moment(found[2], 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date'))
+            )
+          } else if (gYearMonth2gYearMonth.test(dateString)) {
+            found = dateString.match(gYearMonth2gYearMonth)
+            quads.push(
+              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(found[1], 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth')),
+              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'), p.rdf.literal(moment(found[2], 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth'))
+            )
+          } else if (date.test(dateString)) {
+            quads.push(
+              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(dateString, 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date'))
+            )
+          } else if (gYearMonth.test(dateString)) {
+            quads.push(
+              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(dateString, 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth'))
             )
           } else {
             console.log('Unparsed date: ' + dateString)
