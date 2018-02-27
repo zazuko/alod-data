@@ -22,6 +22,13 @@ function convertCsvw (filename) {
         if (predicate.value === 'http://data.alod.ch/alod/legacyTimeRange') {
           const dateString = object.value.trim()
 
+          /*
+            startsWith('-') -> nur intervalEnds
+            endsWith('-') -> nur intervalStarts
+            '-' in Mitte: -> split, danach einzeln verarbeiten
+
+          */
+
           // regex patterns
           const gYear = /^\d{4}$/ // 2018
           const gYearMonth = /^(\d{4}\.\d{2})$/ // 2010.09
@@ -33,8 +40,8 @@ function convertCsvw (filename) {
           let found = []
 
           if (gYear.test(dateString)) {
-            found = dateString.match(RegExp(gYear))
-            quads.push(p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(found[1], 'http://www.w3.org/2001/XMLSchema#gYear')))
+            found = dateString.match(gYear)
+            quads.push(p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(found[0], 'http://www.w3.org/2001/XMLSchema#gYear')))
           } else if (gYear2gYear.test(dateString)) {
             found = dateString.match(gYear2gYear)
             quads.push(
