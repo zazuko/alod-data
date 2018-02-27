@@ -21,8 +21,8 @@
     "convert": "mkdir -p target && node index.js",
     "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/BAR.nt",
     "tdb-load": "tdbloader --loc=target/tdb target/BAR.nt",
-    "tdb-query": "./scripts/tdb-query.sh",
+    "tdb-update": "./scripts/tdb-update.sh",
     "tdb-dump": "./scripts/tdb-dump.sh",
-    "post-incidents": "./scripts/lindas-post-dimensions.sh"
+    "lindas-put": "env ENDPOINT=https://test.lindas-data.ch:8443/alod ./scripts/lindas-put-everything.sh"
   }
 }
