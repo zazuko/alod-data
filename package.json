@@ -19,7 +19,10 @@
   "scripts": {
     "clean": "rm -rf target/*",
     "convert": "mkdir -p target && node index.js",
-    "clean-incidents": "cat target/incidents.nt | sed '/_:/d' | sed '/<file/d' > target/incidents-clean.nt",
+    "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/BAR.nt",
+    "tdb-load": "tdbloader --loc=target/tdb target/BAR.nt",
+    "tdb-query": "./scripts/tdb-query.sh",
+    "tdb-dump": "./scripts/tdb-dump.sh",
     "post-incidents": "./scripts/lindas-post-dimensions.sh"
   }
 }
