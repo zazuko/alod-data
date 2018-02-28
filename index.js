@@ -19,6 +19,13 @@ function convertCsvw (filename) {
         const object = quad.object
         let quads = []
 
+        // Flip relationship from relation, object becomes subject
+        if (predicate.value === 'http://example.org/relation') {
+          quads.push(
+            p.rdf.quad(object, p.rdf.namedNode('http://www.ica.org/standards/RiC/ontology#hasMember'), subject)
+          )
+        }
+
         if (predicate.value === 'http://data.alod.ch/alod/legacyTimeRange') {
           const dateString = object.value.trim()
 
@@ -77,9 +84,7 @@ function convertCsvw (filename) {
           }
         }
 
-        if (quads.length === 0) {
-          quads.push(p.rdf.quad(subject, predicate, object))
-        }
+        quads.push(p.rdf.quad(subject, predicate, object))
 
         return quads
       }))

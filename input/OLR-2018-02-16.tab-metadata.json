@@ -29,7 +29,8 @@
       },
       {
         "titles": "LEVEL_TXT",
-        "propertyUrl": "http://example.org/level"
+        "propertyUrl": "http://data.archiveshub.ac.uk/def/level",
+        "valueUrl": "http://data.alod.ch/alod/level/{LEVEL_TXT}"
       },
       {
         "titles": "ZT_RAUM_TXT",
@@ -53,7 +54,7 @@
       },
       {
         "titles": "PARENT_ID",
-        "propertyUrl": "http://purl.org/dc/terms/relation",
+        "propertyUrl": "http://example.org/relation",
         "valueUrl": "http://data.alod.ch/bar/id/archivalresource/{PARENT_ID}"
       },
       {
