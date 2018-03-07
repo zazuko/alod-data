@@ -21,7 +21,7 @@
     "get-bar": "curl http://ktk.netlabs.org/misc/rdf/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
     "convert": "mkdir -p target && node index.js",
     "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/everything.nt",
-    "tdb-load": "tdbloader --loc=target/tdb target/BAR.nt",
+    "tdb-load": "tdbloader --loc=target/tdb target/everything.nt",
     "tdb-update": "./scripts/tdb-update.sh",
     "tdb-dump": "./scripts/tdb-dump.sh",
     "lindas-put": "env ENDPOINT=https://test.lindas-data.ch:8443/alod ./scripts/lindas-put-everything.sh",
