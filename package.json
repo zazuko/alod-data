@@ -10,8 +10,7 @@
   "dependencies": {
     "barnard59": "git+https://github.com/zazuko/barnard59.git#master",
     "gitlab-ci-validate": "^0.1.2",
-    "json": "^9.0.6",
-    "moment": "^2.20.1"
+    "json": "^9.0.6"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.2"
@@ -26,6 +25,5 @@
     "tdb-dump": "./scripts/tdb-dump.sh",
     "lindas-put": "env ENDPOINT=https://test.lindas-data.ch:8443/alod ./scripts/lindas-put-everything.sh",
     "zz-put": "env ENDPOINT=http://data.zazuko.com:5820/alod ./scripts/lindas-put-everything.sh"
-
   }
 }

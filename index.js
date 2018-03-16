@@ -1,6 +1,43 @@
 const p = require('barnard59')
 const path = require('path')
-const moment = require('moment')
+
+function parseDate(dateString) {
+  const datePattern = /(^|-|(?<=-))(?:(?:(\d{4})(?:|\.(\d{2})(?:|\.(\d{2})))(?:|\s(\(ca\.\))))|(s\.d\.\s\(sine dato\)|k\.A\.|keine\sAngabe))(-|$)/g
+
+  let result, match, matchCount = 0, index = 0
+  while (match = datePattern.exec(dateString)) {
+    if (index != match.index) { return }
+    matchCount++
+
+    const [whole, prefix, year, month, date, isApproximate, isMissing, suffix] = match
+    const parsed = {}
+    if (year) {
+      parsed.year = +year
+      if (month) {
+        if (month < 1 || 12 < month) { return }
+        parsed.month = +month
+        if (date) {
+          const daysInMonth = new Date(parsed.year, parsed.month, 0).getDate()
+          if (date < 1 || daysInMonth < date) { return }
+          parsed.date = +date
+        }
+      }
+      if (isApproximate) { parsed.isApproximate = true }
+    } else if (isMissing) { parsed.isMissing = true }
+    else { return }
+
+    if (matchCount === 1 && prefix === '' && suffix === '') { result = parsed }
+    else if (matchCount === 1 && prefix === '' && suffix === '-') { result = { start: parsed } }
+    else if (matchCount === 1 && prefix === '-' && suffix === '') { result = { end: parsed } }
+    else if (matchCount === 2 && prefix === '' && suffix === '') { result.end = parsed }
+    else { return }
+
+    index = match.index + whole.length
+  }
+  if (index != dateString.length) { return }
+
+  return result
+}
 
 function convertCsvw (filename) {
   const filenameInput = 'input/' + filename
@@ -28,64 +65,35 @@ function convertCsvw (filename) {
 
         if (predicate.value === 'http://data.alod.ch/alod/legacyTimeRange') {
           const dateString = object.value.trim()
+          const parsedDate = parseDate(dateString)
 
-          /*
-            startsWith('-') -> nur intervalEnds
-            endsWith('-') -> nur intervalStarts
-            '-' in Mitte: -> split, danach einzeln verarbeiten
-
-          */
-
-          // regex patterns
-          const gYear = /^\d{4}$/ // 2018
-          const gYearMonth = /^(\d{4}\.\d{2})$/ // 2010.09
-          const date = /^(\d{4}\.\d{2}\.\d{2})$/ // 2010.09.13
-          const gYear2gYear = /^(\d{4})\s*-\s*(\d{4})$/ // 2011-2019
-          const date2date = /^(\d{4}\.\d{2}\.\d{2})\s*-\s*(\d{4}\.\d{2}\.\d{2})$/ // 2010.09.13-2011.03.14
-          const gYearMonth2gYearMonth = /^(\d{4}\.\d{2})\s*-\s*(\d{4}\.\d{2})$/ // 1985.11-1986.04
-
-          let found = []
-
-          if (gYear.test(dateString)) {
-            found = dateString.match(gYear)
-            quads.push(p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(found[0], 'http://www.w3.org/2001/XMLSchema#gYear')))
-          } else if (gYear2gYear.test(dateString)) {
-            found = dateString.match(gYear2gYear)
-            quads.push(
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(found[1], 'http://www.w3.org/2001/XMLSchema#gYear')),
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'), p.rdf.literal(found[2], 'http://www.w3.org/2001/XMLSchema#gYear'))
-            )
-          } else if (date2date.test(dateString)) {
-            found = dateString.match(date2date)
-            quads.push(
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(found[1], 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date')),
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'), p.rdf.literal(moment(found[2], 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date'))
-            )
-          } else if (gYearMonth2gYearMonth.test(dateString)) {
-            found = dateString.match(gYearMonth2gYearMonth)
-            quads.push(
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(found[1], 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth')),
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'), p.rdf.literal(moment(found[2], 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth'))
-            )
-          } else if (date.test(dateString)) {
-            quads.push(
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(dateString, 'YYYY.MM.DD').format('YYYY-MM-DD'), 'http://www.w3.org/2001/XMLSchema#date'))
-            )
-          } else if (gYearMonth.test(dateString)) {
-            quads.push(
-              p.rdf.quad(subject, p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'), p.rdf.literal(moment(dateString, 'YYYY.MM').format('YYYY-MM'), 'http://www.w3.org/2001/XMLSchema#gYearMonth'))
-            )
-          } else if (dateString.startsWith('s.d.')) {
-            // s.d. (sine dato)
-          } else if (dateString.startsWith('keine Angabe')) {
-            // keine Angabe
+          if (parsedDate) {
+            function fmt(number, length) { return String(number).padStart(length, '0') }
+            (function addQuads(date, isEnd = false) {
+              if (date.start) { addQuads(date.start) }
+              if (date.end) { addQuads(date.end, true) }
+              if (date.isMissing) {
+                //TODO: TBD
+              }
+              if (date.year) {
+                const predicate = p.rdf.namedNode(`http://www.w3.org/2006/time#interval${isEnd ? 'Ends' : 'Starts'}`)
+                let object
+                if (date.month) {
+                  if (date.date) { object = p.rdf.literal(`${fmt(date.year, 4)}-${fmt(date.month, 2)}-${fmt(date.date, 2)}`, 'http://www.w3.org/2001/XMLSchema#date') }
+                  else { object = p.rdf.literal(`${fmt(date.year, 4)}-${fmt(date.month, 2)}`, 'http://www.w3.org/2001/XMLSchema#gYearMonth') }
+                } else { object = p.rdf.literal(fmt(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear') }
+                quads.push(p.rdf.quad(subject, predicate, object))
+                if (date.isApproximate) {
+                  //TODO: TBD
+                }
+              }
+            })(parsedDate)
           } else {
             console.log('Unparsed date: ' + dateString)
           }
         }
 
         quads.push(p.rdf.quad(subject, predicate, object))
-
         return quads
       }))
       .pipe(p.flatten())
