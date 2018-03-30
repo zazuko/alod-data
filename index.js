@@ -9,7 +9,7 @@ function parseDate(dateString) {
     if (index != match.index) { return }
     matchCount++
 
-    const [whole, prefix, year, month, date, isApproximate, isSineDato, isNotAvailable, suffix] = match
+    const [whole, prefix, year, month, date, isCirca, isSineDato, isNotSpecified, suffix] = match
     const parsed = {}
     if (year) {
       parsed.year = +year
@@ -22,9 +22,9 @@ function parseDate(dateString) {
           parsed.date = +date
         }
       }
-      if (isApproximate) { parsed.isApproximate = true }
+      if (isCirca) { parsed.isCirca = true }
     } else if (isSineDato) { parsed.isSineDato = true }
-    else if (isNotAvailable) { parsed.isNotAvailable = true }
+    else if (isNotSpecified) { parsed.isNotSpecified = true }
     else { return }
 
     if (matchCount === 1 && prefix === '' && suffix === '') { result = parsed }
@@ -64,34 +64,43 @@ function convertCsvw (filename) {
           )
         }
 
+        // Proper date (range) parsing
         if (predicate.value === 'http://data.alod.ch/alod/legacyTimeRange') {
           const dateString = object.value.trim()
           const parsedDate = parseDate(dateString)
 
           if (parsedDate) {
+            const nodes = {
+              intervalStarts: p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'),
+              intervalEnds: p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'),
+              intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalStartsCirca'),
+              intervalEndsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalEndsCirca'),
+              type: p.rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+              sineDato: p.rdf.namedNode('http://data.alod.ch/alod/time/SineDato'),
+              notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified')
+            }
             function pad(number, length) { return String(number).padStart(length, '0') }
-            (function addQuads(date, isEnd = false) {
-              if (date.start) { addQuads(date.start) }
-              if (date.end) { addQuads(date.end, true) }
-              if (date.isSineDato) {
-                //TODO: TBD
-              }
-              if (date.isNotAvailable) {
-                //TODO: TBD
-              }
-              if (date.year) {
-                const predicate = p.rdf.namedNode(`http://www.w3.org/2006/time#interval${isEnd ? 'Ends' : 'Starts'}`)
+            (function addQuads(date, isStart, isEnd) {
+              if (date.start) { addQuads(date.start, true, false) }
+              else if (date.end) { addQuads(date.end, false, true) }
+              else if (date.year) {
+                const predicates = []
+                if (isStart) { predicates.push(nodes[`intervalStarts${date.isCirca ? 'Circa' : ''}`]) }
+                if (isEnd) { predicates.push(nodes[`intervalEnds${date.isCirca ? 'Circa' : ''}`]) }
                 let object
                 if (date.month) {
                   if (date.date) { object = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}-${pad(date.date, 2)}`, 'http://www.w3.org/2001/XMLSchema#date') }
                   else { object = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}`, 'http://www.w3.org/2001/XMLSchema#gYearMonth') }
                 } else { object = p.rdf.literal(pad(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear') }
-                quads.push(p.rdf.quad(subject, predicate, object))
-                if (date.isApproximate) {
-                  //TODO: TBD
+                for (let predicate of predicates) {
+                  quads.push(p.rdf.quad(subject, predicate, object))
                 }
+              } else if (date.isSineDato) {
+                quads.push(p.rdf.quad(subject, nodes.type, nodes.sineDato))
+              } else if (date.isNotSpecified) {
+                quads.push(p.rdf.quad(subject, nodes.type, nodes.notSpecified))
               }
-            })(parsedDate)
+            })(parsedDate, true, true)
           } else {
             console.log('Unparsed date: ' + dateString)
           }
