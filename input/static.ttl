@@ -8,6 +8,7 @@ PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
 PREFIX gont: <https://gont.ch/> 
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
 PREFIX sh: <http://www.w3.org/ns/shacl#> 
+PREFIX ric: <http://www.ica.org/standards/RiC/ontology#>
 
 ## Classes & Properties
 
@@ -23,7 +24,35 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
     rdfs:label "Non spécifié"@fr ;
     rdfs:label "Non specificato"@it ;
     rdfs:label "No especificado"@es ;
-    rdfs:label "niet gespecificeerd"@nl .
+    rdfs:label "Niet gespecificeerd"@nl .
+
+### Needs to be properly implemented with OWL Time
+
+<time/IntervalStartsCirca> a rdfs:Class ;
+    rdfs:label "Interval starts circa"@en .
+
+<time/IntervalEndsCirca> a rdfs:Class ;
+    rdfs:label "Interval ends circa"@en .
 
 ### related to hierarchy
 
+<level/Dossier> a ric:RecordSet ;
+    rdfs:label "Dossier" .
+
+<level/Archives> a ric:RecordSet ;
+    rdfs:label "Archives" .
+
+<level/Fonds> a ric:RecordSet ;
+    rdfs:label "Fonds" .
+
+<level/Sub-Fonds> a ric:RecordSet ;
+    rdfs:label "Sub-Fonds" .
+
+<level/Series> a ric:RecordSet ;
+    rdfs:label "Series" .
+
+<level/Files> a ric:RecordSet ;
+    rdfs:label "Files" .
+
+<level/Items> a ric:RecordSet ;
+    rdfs:label "Items" .
