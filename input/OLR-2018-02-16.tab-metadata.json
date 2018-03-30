@@ -13,7 +13,7 @@
       },
       {
         "titles": "SGNTR_CD",
-        "suppressOutput":true
+        "propertyUrl": "http://data.alod.ch/alod/property/referenceCode"
       },
       {
         "titles": "TITEL",
