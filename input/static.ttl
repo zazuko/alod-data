@@ -1,0 +1,29 @@
+BASE <http://data.alod.ch/alod/> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
+PREFIX dcterms: <htp://purl.org/dc/terms/> 
+PREFIX schema: <http://schema.org/> 
+PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> 
+PREFIX gont: <https://gont.ch/> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX sh: <http://www.w3.org/ns/shacl#> 
+
+## Classes & Properties
+
+### related to time
+
+<time/SineDato> a rdfs:Class ;
+    rdfs:label "Sine dato" ; 
+    rdfs:comment "Sine dato" .
+
+<time/NotSpecified> a rdfs:Class ;
+    rdfs:label "Not specified"@en ;
+    rdfs:label "Keine Angabe"@de ;
+    rdfs:label "Non spécifié"@fr ;
+    rdfs:label "Non specificato"@it ;
+    rdfs:label "No especificado"@es ;
+    rdfs:label "niet gespecificeerd"@nl .
+
+### related to hierarchy
+
