@@ -2,14 +2,14 @@ const p = require('barnard59')
 const path = require('path')
 
 function parseDate(dateString) {
-  const datePattern = /(^|-|(?<=-))(?:(?:(\d{4})(?:|\.(\d{2})(?:|\.(\d{2})))(?:|\s(\(ca\.\))))|(s\.d\.\s\(sine dato\)|k\.A\.|keine\sAngabe))(-|$)/g
+  const datePattern = /(^|-|(?<=-))(?:(?:(\d{4})(?:|\.(\d{2})(?:|\.(\d{2})))(?:|\s(\(ca\.\))))|(s\.d\.\s\(sine dato\))|(k\.A\.|keine\sAngabe))(-|$)/g
 
   let result, match, matchCount = 0, index = 0
   while (match = datePattern.exec(dateString)) {
     if (index != match.index) { return }
     matchCount++
 
-    const [whole, prefix, year, month, date, isApproximate, isMissing, suffix] = match
+    const [whole, prefix, year, month, date, isApproximate, isSineDato, isNotAvailable, suffix] = match
     const parsed = {}
     if (year) {
       parsed.year = +year
@@ -23,7 +23,8 @@ function parseDate(dateString) {
         }
       }
       if (isApproximate) { parsed.isApproximate = true }
-    } else if (isMissing) { parsed.isMissing = true }
+    } else if (isSineDato) { parsed.isSineDato = true }
+    else if (isNotAvailable) { parsed.isNotAvailable = true }
     else { return }
 
     if (matchCount === 1 && prefix === '' && suffix === '') { result = parsed }
@@ -68,20 +69,23 @@ function convertCsvw (filename) {
           const parsedDate = parseDate(dateString)
 
           if (parsedDate) {
-            function fmt(number, length) { return String(number).padStart(length, '0') }
+            function pad(number, length) { return String(number).padStart(length, '0') }
             (function addQuads(date, isEnd = false) {
               if (date.start) { addQuads(date.start) }
               if (date.end) { addQuads(date.end, true) }
-              if (date.isMissing) {
+              if (date.isSineDato) {
+                //TODO: TBD
+              }
+              if (date.isNotAvailable) {
                 //TODO: TBD
               }
               if (date.year) {
                 const predicate = p.rdf.namedNode(`http://www.w3.org/2006/time#interval${isEnd ? 'Ends' : 'Starts'}`)
                 let object
                 if (date.month) {
-                  if (date.date) { object = p.rdf.literal(`${fmt(date.year, 4)}-${fmt(date.month, 2)}-${fmt(date.date, 2)}`, 'http://www.w3.org/2001/XMLSchema#date') }
-                  else { object = p.rdf.literal(`${fmt(date.year, 4)}-${fmt(date.month, 2)}`, 'http://www.w3.org/2001/XMLSchema#gYearMonth') }
-                } else { object = p.rdf.literal(fmt(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear') }
+                  if (date.date) { object = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}-${pad(date.date, 2)}`, 'http://www.w3.org/2001/XMLSchema#date') }
+                  else { object = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}`, 'http://www.w3.org/2001/XMLSchema#gYearMonth') }
+                } else { object = p.rdf.literal(pad(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear') }
                 quads.push(p.rdf.quad(subject, predicate, object))
                 if (date.isApproximate) {
                   //TODO: TBD
