@@ -1,6 +1,7 @@
 const p = require('barnard59')
 const path = require('path')
 
+//Proper date (range) parsing function
 function parseDate(dateString) {
   const datePattern = /(^|-|(?<=-))(?:(?:(\d{4})(?:|\.(\d{2})(?:|\.(\d{2})))(?:|\s(\(ca\.\))))|(s\.d\.\s\(sine dato\))|(k\.A\.|keine\sAngabe))(-|$)/g
 
@@ -40,6 +41,31 @@ function parseDate(dateString) {
   return result
 }
 
+// Named RDF nodes
+const nodes = {
+  hasMember: p.rdf.namedNode('http://www.ica.org/standards/RiC/ontology#hasMember'),
+  intervalStarts: p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'),
+  intervalEnds: p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'),
+  intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalStartsCirca'),
+  intervalEndsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalEndsCirca'),
+  type: p.rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+  sineDato: p.rdf.namedNode('http://data.alod.ch/alod/time/SineDato'),
+  notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified')
+}
+
+// Levels
+const levelReplacements = new Map([
+  ['http://data.alod.ch/alod/level/Archiv', 'http://data.alod.ch/alod/level/archive'],
+  //['http://data.alod.ch/alod/level/Hauptabteilung', ???],
+  ['http://data.alod.ch/alod/level/Bestand', 'http://data.alod.ch/alod/level/fond'],
+  ['http://data.alod.ch/alod/level/Teilbestand', 'http://data.alod.ch/alod/level/subfond'],
+  ['http://data.alod.ch/alod/level/Serie', 'http://data.alod.ch/alod/level/series'],
+  ['http://data.alod.ch/alod/level/Dossier', 'http://data.alod.ch/alod/level/file'],
+  //['http://data.alod.ch/alod/level/Subdossier', ???],
+  ['http://data.alod.ch/alod/level/Dokument', 'http://data.alod.ch/alod/level/item']
+])
+const validLevels = [...levelReplacements.values()]
+
 function convertCsvw (filename) {
   const filenameInput = 'input/' + filename
   const filenameMetadata = filenameInput + '-metadata.json'
@@ -59,9 +85,7 @@ function convertCsvw (filename) {
 
         // Flip relationship from relation, object becomes subject
         if (predicate.value === 'http://example.org/relation') {
-          quads.push(
-            p.rdf.quad(object, p.rdf.namedNode('http://www.ica.org/standards/RiC/ontology#hasMember'), subject)
-          )
+          quads.push(p.rdf.quad(object, nodes.hasMember, subject))
         }
 
         // Proper date (range) parsing
@@ -70,15 +94,6 @@ function convertCsvw (filename) {
           const parsedDate = parseDate(dateString)
 
           if (parsedDate) {
-            const nodes = {
-              intervalStarts: p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'),
-              intervalEnds: p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'),
-              intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalStartsCirca'),
-              intervalEndsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalEndsCirca'),
-              type: p.rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-              sineDato: p.rdf.namedNode('http://data.alod.ch/alod/time/SineDato'),
-              notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified')
-            }
             function pad(number, length) { return String(number).padStart(length, '0') }
             (function addQuads(date, isStart, isEnd) {
               if (date.start) { addQuads(date.start, true, false) }
@@ -102,7 +117,16 @@ function convertCsvw (filename) {
               }
             })(parsedDate, true, true)
           } else {
-            console.log('Unparsed date: ' + dateString)
+            console.log(`Unparsed date: ${dateString}`)
+          }
+        }
+
+        // Proper level names
+        if (predicate.value === 'http://data.archiveshub.ac.uk/def/level' && !validLevels.includes(object.value)) {
+          if (levelReplacements.has(object.value)) {
+            object.value = levelReplacements.get(object.value)
+          } else {
+            console.log(`Unrecognized level: ${object.value}`)
           }
         }
 
