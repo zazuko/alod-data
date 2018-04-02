@@ -55,14 +55,14 @@ const nodes = {
 
 // Levels
 const levelReplacements = new Map([
-  ['http://data.alod.ch/alod/level/Archiv', 'http://data.alod.ch/alod/level/archive'],
-  //['http://data.alod.ch/alod/level/Hauptabteilung', ???],
-  ['http://data.alod.ch/alod/level/Bestand', 'http://data.alod.ch/alod/level/fond'],
-  ['http://data.alod.ch/alod/level/Teilbestand', 'http://data.alod.ch/alod/level/subfond'],
-  ['http://data.alod.ch/alod/level/Serie', 'http://data.alod.ch/alod/level/series'],
-  ['http://data.alod.ch/alod/level/Dossier', 'http://data.alod.ch/alod/level/file'],
-  //['http://data.alod.ch/alod/level/Subdossier', ???],
-  ['http://data.alod.ch/alod/level/Dokument', 'http://data.alod.ch/alod/level/item']
+  ['http://data.alod.ch/alod/level/Archiv',         'http://data.alod.ch/alod/level/archive'],
+  ['http://data.alod.ch/alod/level/Hauptabteilung', 'http://data.alod.ch/alod/level/department'],
+  ['http://data.alod.ch/alod/level/Bestand',        'http://data.alod.ch/alod/level/fond'],
+  ['http://data.alod.ch/alod/level/Teilbestand',    'http://data.alod.ch/alod/level/subfond'],
+  ['http://data.alod.ch/alod/level/Serie',          'http://data.alod.ch/alod/level/series'],
+  ['http://data.alod.ch/alod/level/Dossier',        'http://data.alod.ch/alod/level/file'],
+  ['http://data.alod.ch/alod/level/Subdossier',     'http://data.alod.ch/alod/level/subfile'],
+  ['http://data.alod.ch/alod/level/Dokument',       'http://data.alod.ch/alod/level/item']
 ])
 const validLevels = [...levelReplacements.values()]
 
