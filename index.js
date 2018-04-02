@@ -96,9 +96,10 @@ function convertCsvw (filename) {
           if (parsedDate) {
             function pad(number, length) { return String(number).padStart(length, '0') }
             (function addQuads(date, isStart, isEnd) {
-              if (date.start) { addQuads(date.start, true, false) }
-              else if (date.end) { addQuads(date.end, false, true) }
-              else if (date.year) {
+              if (date.start || date.end) {
+                if (date.start) { addQuads(date.start, true, false) }
+                if (date.end) { addQuads(date.end, false, true) }
+              } else if (date.year) {
                 const predicates = []
                 if (isStart) { predicates.push(nodes[`intervalStarts${date.isCirca ? 'Circa' : ''}`]) }
                 if (isEnd) { predicates.push(nodes[`intervalEnds${date.isCirca ? 'Circa' : ''}`]) }
