@@ -11,6 +11,8 @@ stages:
 
 curl_bar_job:
   stage: fetch
+  tags: 
+    - ssz
   script:
     - npm run get-bar
   artifacts:
@@ -20,6 +22,8 @@ curl_bar_job:
 
 convert_bar_job:
   stage: convert
+  tags: 
+    - ssz
   script:
     - npm run convert
     - npm run clean-bar
