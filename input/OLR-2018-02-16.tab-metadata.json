@@ -29,7 +29,7 @@
       },
       {
         "titles": "LEVEL_TXT",
-        "propertyUrl": "http://data.archiveshub.ac.uk/def/level",
+        "propertyUrl": "http://www.ica.org/standards/RiC/ontology#recordSetType",
         "valueUrl": "http://data.alod.ch/alod/level/{LEVEL_TXT}"
       },
       {
