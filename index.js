@@ -123,7 +123,7 @@ function convertCsvw (filename) {
         }
 
         // Proper level names
-        if (predicate.value === 'http://data.archiveshub.ac.uk/def/level' && !validLevels.includes(object.value)) {
+        if (predicate.value === 'http://www.ica.org/standards/RiC/ontology#recordSetType' && !validLevels.includes(object.value)) {
           if (levelReplacements.has(object.value)) {
             object.value = levelReplacements.get(object.value)
           } else {
