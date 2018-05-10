@@ -17,7 +17,7 @@
   },
   "scripts": {
     "clean": "rm -rf target/*",
-    "get-bar": "curl http://ktk.netlabs.org/misc/rdf/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
+    "get-bar": "curl https://sos-ch-dk-2.exo.io/zazuko-ingress/alod/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
     "convert": "mkdir -p target && node index.js",
     "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/everything.nt",
     "tdb-load": "tdbloader --loc=target/tdb target/everything.nt",

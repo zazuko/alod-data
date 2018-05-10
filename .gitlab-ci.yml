@@ -18,7 +18,7 @@ curl_bar_job:
   artifacts:
     paths:
       - input/OLR-2018-02-16.tab
-    expire_in: 30 minutes
+    expire_in: 2 hours
 
 convert_bar_job:
   stage: convert
