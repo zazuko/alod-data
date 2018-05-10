@@ -4,32 +4,31 @@ before_script:
 
 # stages
 stages:
-- fetch
 - convert
 
 # jobs
 
-curl_bar_job:
-  stage: fetch
-  tags: 
-    - ssz
-  script:
-    - npm run get-bar
-  artifacts:
-    paths:
-      - input/OLR-2018-02-16.tab
-    expire_in: 2 hours
+# overhead for the fetch only is hight, merged for now
+#curl_bar_job:
+#  stage: fetch
+#  tags: 
+#    - ssz
+#  script:
+#    - npm run get-bar
+#  artifacts:
+#    paths:
+#      - input/OLR-2018-02-16.tab
+#    expire_in: 2 hours
 
 convert_bar_job:
   stage: convert
   tags: 
     - ssz
   script:
+    - npm run get-bar
     - npm run convert
     - npm run clean-bar
   artifacts:
     paths:
       - target/everything.nt
     expire_in: 1 day
-  dependencies:
-    - curl_bar_job
