@@ -49,11 +49,11 @@ function parseDate(dateString) {
 const nodes = {
   hasMember: p.rdf.namedNode('http://www.ica.org/standards/RiC/ontology#hasMember'),
   intervalStarts: p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'),
-  intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalStartsCirca'),
-  intervalStartsValid: p.rdf.namedNode('http://data.alod.ch/alod/time/HiddenIntervalStarts'),
+  intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/intervalStartsCirca'),
+  intervalStartsValid: p.rdf.namedNode('http://data.alod.ch/alod/time/hiddenIntervalStarts'),
   intervalEnds: p.rdf.namedNode('http://www.w3.org/2006/time#intervalEnds'),
-  intervalEndsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/IntervalEndsCirca'),
-  intervalEndsValid: p.rdf.namedNode('http://data.alod.ch/alod/time/HiddenIntervalEnds'),
+  intervalEndsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/intervalEndsCirca'),
+  intervalEndsValid: p.rdf.namedNode('http://data.alod.ch/alod/time/hiddenIntervalEnds'),
   type: p.rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
   sineDato: p.rdf.namedNode('http://data.alod.ch/alod/time/SineDato'),
   notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified')
