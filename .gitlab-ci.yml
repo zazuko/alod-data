@@ -1,5 +1,6 @@
 image: zazukoians/node-java-jena
 before_script:
+  - npm version
   - npm install
 
 # stages
