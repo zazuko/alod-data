@@ -26,6 +26,12 @@ PREFIX ric: <http://www.ica.org/standards/RiC/ontology#>
     rdfs:label "No especificado"@es ;
     rdfs:label "Niet gespecificeerd"@nl .
 
+<time/HiddenIntervalStarts> a rdfs:Class ;
+    rdfs:label "Hidden interval starts"@en .
+
+<time/HiddenIntervalEnds> a rdfs:Class ;
+    rdfs:label "Hidden interval ends"@en .
+
 ### Needs to be properly implemented with OWL Time
 
 <time/IntervalStartsCirca> a rdfs:Class ;
