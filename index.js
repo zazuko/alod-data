@@ -119,7 +119,7 @@ function convertCsvw (filename) {
                 } else {
                   object = p.rdf.literal(pad(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear')
                   objectValidStart = p.rdf.literal(`${pad(date.year, 4)}-01-01`, 'http://www.w3.org/2001/XMLSchema#date')
-                  objectValidEnd = p.rdf.literal(`${pad(date.year, 4)}-12-${pad(getDaysInMonth(date.year, 11), 2)}`, 'http://www.w3.org/2001/XMLSchema#date')
+                  objectValidEnd = p.rdf.literal(`${pad(date.year, 4)}-12-31`, 'http://www.w3.org/2001/XMLSchema#date')
                 }
 
                 if (isStart) {
