@@ -3,7 +3,6 @@ before_script:
   - npm version
   - npm install
 
-# stages
 stages:
 - convert
 
@@ -15,6 +14,7 @@ convert_bar_job:
     - npm run get-bar
     - npm run convert
     - npm run clean-bar
+    - npm run store-load
   artifacts:
     paths:
       - target/everything.nt
