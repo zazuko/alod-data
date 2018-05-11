@@ -1,6 +1,10 @@
 const p = require('barnard59')
 const path = require('path')
 
+function pad(number, length) {
+  return String(number).padStart(length, '0')
+}
+
 // Get number of days in a month
 function getDaysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate()
@@ -12,7 +16,7 @@ function parseDate(dateString) {
 
   let result, match, matchCount = 0, index = 0
   while (match = datePattern.exec(dateString)) {
-    if (index != match.index) { return }
+    if (index !== match.index) { return }
     matchCount++
 
     const [whole, prefix, year, month, date, isCirca, isSineDato, isNotSpecified, suffix] = match
@@ -32,21 +36,87 @@ function parseDate(dateString) {
     else if (isNotSpecified) { parsed.isNotSpecified = true }
     else { return }
 
-    if (matchCount === 1 && prefix === '' && suffix === '') { result = parsed }
-    else if (matchCount === 1 && prefix === '' && suffix === '-') { result = { start: parsed } }
-    else if (matchCount === 1 && prefix === '-' && suffix === '') { result = { end: parsed } }
-    else if (matchCount === 2 && prefix === '' && suffix === '') { result.end = parsed }
+    if (matchCount === 1) {
+      if (prefix === '' && suffix === '') { result = parsed }
+      else if (prefix === '' && suffix === '-') { result = { start: parsed } }
+      else if (prefix === '-' && suffix === '') { result = { end: parsed } }
+      else { return }
+    }  else if (matchCount === 2 && prefix === '' && suffix === '') { result.end = parsed }
     else { return }
 
     index = match.index + whole.length
   }
-  if (index != dateString.length) { return }
+  if (index !== dateString.length) { return }
 
   return result
 }
 
+function addQuads(subject, quads, date, isStart, isEnd) {
+  if (date.start || date.end) { // recursive calls
+    if (date.start) { addQuads(subject, quads, date.start, true, false) }
+    if (date.end) { addQuads(subject, quads, date.end, false, true) }
+
+  } else if (date.year) { // quad generation for (partial) dates
+    const year = pad(date.year, 4)
+
+    let object, objectValidStart, objectValidEnd
+    if (date.month) {
+      const month = pad(date.month, 2)
+
+      if (date.date) {
+        object = objectValidStart = objectValidEnd = p.rdf.literal(`${year}-${month}-${pad(date.date, 2)}`, nodes.date)
+      } else {
+        object = p.rdf.literal(`${year}-${month}`, nodes.yearMonth)
+
+        if (isStart) {
+          objectValidStart = p.rdf.literal(`${year}-${month}-01`, nodes.date)
+        }
+
+        if (isEnd) {
+          objectValidEnd = p.rdf.literal(`${year}-${month}-${pad(getDaysInMonth(date.year, date.month - 1), 2)}`, nodes.date)
+        }
+      }
+    } else {
+      object = p.rdf.literal(pad(date.year, 4), nodes.year)
+
+      if (isStart) {
+        objectValidStart = p.rdf.literal(`${year}-01-01`, nodes.date)
+      }
+
+      if (isEnd) {
+        objectValidEnd = p.rdf.literal(`${year}-12-31`, nodes.date)
+      }
+    }
+
+    if (isStart) {
+      if (date.isCirca) {
+        quads.push(p.rdf.quad(subject, nodes.intervalStartsCirca, object))
+      } else {
+        quads.push(p.rdf.quad(subject, nodes.intervalStarts, object))
+      }
+
+      quads.push(p.rdf.quad(subject, nodes.intervalStartsValid, objectValidStart))
+    }
+    if (isEnd) {
+      if (date.isCirca) {
+        quads.push(p.rdf.quad(subject, nodes.intervalEndsCirca, object))
+      } else {
+        quads.push(p.rdf.quad(subject, nodes.intervalEnds, object))
+      }
+
+      quads.push(p.rdf.quad(subject, nodes.intervalEndsValid, objectValidEnd))
+    }
+
+  } else if (date.isSineDato) { //quad generation for special values
+    quads.push(p.rdf.quad(subject, nodes.type, nodes.sineDato))
+  } else if (date.isNotSpecified) {
+    quads.push(p.rdf.quad(subject, nodes.type, nodes.notSpecified))
+  }
+}
+
 // Named RDF nodes
 const nodes = {
+  date: p.rdf.namedNode('http://www.w3.org/2001/XMLSchema#date'),
   hasMember: p.rdf.namedNode('http://www.ica.org/standards/RiC/ontology#hasMember'),
   intervalStarts: p.rdf.namedNode('http://www.w3.org/2006/time#intervalStarts'),
   intervalStartsCirca: p.rdf.namedNode('http://data.alod.ch/alod/time/intervalStartsCirca'),
@@ -56,7 +126,9 @@ const nodes = {
   intervalEndsValid: p.rdf.namedNode('http://data.alod.ch/alod/time/hiddenIntervalEnds'),
   type: p.rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
   sineDato: p.rdf.namedNode('http://data.alod.ch/alod/time/SineDato'),
-  notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified')
+  notSpecified: p.rdf.namedNode('http://data.alod.ch/alod/time/NotSpecified'),
+  year: p.rdf.namedNode('http://www.w3.org/2001/XMLSchema#gYear'),
+  yearMonth: p.rdf.namedNode('http://www.w3.org/2001/XMLSchema#gYearMonth')
 }
 
 // Levels
@@ -87,7 +159,7 @@ function convertCsvw (filename) {
         const subject = quad.subject
         const predicate = quad.predicate
         const object = quad.object
-        let quads = []
+        const quads = []
 
         // Flip relationship from relation, object becomes subject
         if (predicate.value === 'http://example.org/relation') {
@@ -100,44 +172,7 @@ function convertCsvw (filename) {
           const parsedDate = parseDate(dateString)
 
           if (parsedDate) {
-            function pad(number, length) { return String(number).padStart(length, '0') }
-            (function addQuads(date, isStart, isEnd) {
-              if (date.start || date.end) { // recursive calls
-                if (date.start) { addQuads(date.start, true, false) }
-                if (date.end) { addQuads(date.end, false, true) }
-
-              } else if (date.year) { // quad generation for (partial) dates
-                let object, objectValidStart, objectValidEnd
-                if (date.month) {
-                  if (date.date) {
-                    object = objectValidStart = objectValidEnd = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}-${pad(date.date, 2)}`, 'http://www.w3.org/2001/XMLSchema#date')
-                  } else {
-                    object = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}`, 'http://www.w3.org/2001/XMLSchema#gYearMonth')
-                    objectValidStart = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}-01`, 'http://www.w3.org/2001/XMLSchema#date')
-                    objectValidEnd = p.rdf.literal(`${pad(date.year, 4)}-${pad(date.month, 2)}-${pad(getDaysInMonth(date.year, date.month - 1), 2)}`, 'http://www.w3.org/2001/XMLSchema#date')
-                  }
-                } else {
-                  object = p.rdf.literal(pad(date.year, 4), 'http://www.w3.org/2001/XMLSchema#gYear')
-                  objectValidStart = p.rdf.literal(`${pad(date.year, 4)}-01-01`, 'http://www.w3.org/2001/XMLSchema#date')
-                  objectValidEnd = p.rdf.literal(`${pad(date.year, 4)}-12-31`, 'http://www.w3.org/2001/XMLSchema#date')
-                }
-
-                if (isStart) {
-                  quads.push(p.rdf.quad(subject, nodes[`intervalStarts${date.isCirca ? 'Circa' : ''}`], object))
-                  quads.push(p.rdf.quad(subject, nodes['intervalStartsValid'], objectValidStart))
-                }
-                if (isEnd) {
-                  quads.push(p.rdf.quad(subject, nodes[`intervalEnds${date.isCirca ? 'Circa' : ''}`], object))
-                  quads.push(p.rdf.quad(subject, nodes['intervalEndsValid'], objectValidEnd))
-                }
-
-              } else if (date.isSineDato) { //quad generation for special values
-                quads.push(p.rdf.quad(subject, nodes.type, nodes.sineDato))
-              } else if (date.isNotSpecified) {
-                quads.push(p.rdf.quad(subject, nodes.type, nodes.notSpecified))
-              }
-            })(parsedDate, true, true)
-
+            addQuads(subject, quads, parsedDate, true, true)
           } else {
             console.log(`Unparsed date: ${dateString}`)
           }
