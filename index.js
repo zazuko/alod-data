@@ -192,6 +192,7 @@ function convertCsvw (filename) {
       }))
       .pipe(p.flatten())
       .pipe(p.ntriples.serialize())
+      .pipe(p.size())
       .pipe(p.file.write(filenameOutput)))
   })
 }

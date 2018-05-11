@@ -14,7 +14,7 @@
     "clean": "rm -rf target/*",
     "get-bar": "curl https://sos-ch-dk-2.exo.io/zazuko-ingress/alod/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
     "convert": "mkdir -p target && node index.js",
-    "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/everything.nt",
+    "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d;/<file/d' > target/everything.nt",
     "lindas-put": "env ENDPOINT=https://test.lindas-data.ch:8443/alod ./scripts/lindas-put-everything.sh",
     "zz-put": "env ENDPOINT=http://data.zazuko.com:5820/alod ./scripts/lindas-put-everything.sh"
   }
