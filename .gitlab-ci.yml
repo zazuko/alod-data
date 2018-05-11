@@ -9,8 +9,6 @@ stages:
 
 convert_bar_job:
   stage: convert
-  tags: 
-    - ssz
   script:
     - npm run get-bar
     - npm run convert
