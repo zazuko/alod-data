@@ -5,24 +5,16 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/zazuko/alod-data"
   },
   "dependencies": {
-    "barnard59": "git+https://github.com/zazuko/barnard59.git#master",
-    "gitlab-ci-validate": "^0.1.2",
-    "json": "^9.0.6"
-  },
-  "devDependencies": {
-    "npm-run-all": "^4.1.2"
+    "barnard59": "git+https://github.com/zazuko/barnard59.git#master"
   },
   "scripts": {
     "clean": "rm -rf target/*",
     "get-bar": "curl https://sos-ch-dk-2.exo.io/zazuko-ingress/alod/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
     "convert": "mkdir -p target && node index.js",
     "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d' | sed '/<file/d' > target/everything.nt",
-    "tdb-load": "tdbloader --loc=target/tdb target/everything.nt",
-    "tdb-update": "./scripts/tdb-update.sh",
-    "tdb-dump": "./scripts/tdb-dump.sh",
     "lindas-put": "env ENDPOINT=https://test.lindas-data.ch:8443/alod ./scripts/lindas-put-everything.sh",
     "zz-put": "env ENDPOINT=http://data.zazuko.com:5820/alod ./scripts/lindas-put-everything.sh"
   }

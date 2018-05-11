@@ -7,20 +7,6 @@ before_script:
 stages:
 - convert
 
-# jobs
-
-# overhead for the fetch only is hight, merged for now
-#curl_bar_job:
-#  stage: fetch
-#  tags: 
-#    - ssz
-#  script:
-#    - npm run get-bar
-#  artifacts:
-#    paths:
-#      - input/OLR-2018-02-16.tab
-#    expire_in: 2 hours
-
 convert_bar_job:
   stage: convert
   tags: 
@@ -32,4 +18,4 @@ convert_bar_job:
   artifacts:
     paths:
       - target/everything.nt
-    expire_in: 1 day
+    expire_in: 10 day

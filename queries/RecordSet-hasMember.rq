@@ -1,9 +1,0 @@
-PREFIX ric: <http://www.ica.org/standards/RiC/ontology#>
-PREFIX dct: <http://purl.org/dc/terms/>
-
-INSERT{
-    ?higher ric:hasMember ?record .
-}
-WHERE {
-    ?record dct:relation ?higher .
-}
