@@ -8,13 +8,14 @@
     "url": "https://github.com/zazuko/alod-data"
   },
   "dependencies": {
-    "barnard59": "git+https://github.com/zazuko/barnard59.git#master"
+    "barnard59": "git+https://github.com/zazuko/barnard59-legacy.git#master"
   },
   "scripts": {
     "clean": "rm -rf target/*",
     "get-bar": "curl https://sos-ch-dk-2.exo.io/zazuko-ingress/alod/OLR-2018-02-16.tab.gz | gzip -d > input/OLR-2018-02-16.tab",
     "convert": "mkdir -p target && NODE_OPTIONS=--max_old_space_size=8192 node index.js",
     "clean-bar": "cat target/OLR-2018-02-16.tab.nt | sed '/_:/d;/<file/d' > target/everything.nt",
-    "store-load": "./scripts/store-load.sh"
+    "store-load": "./scripts/store-load.sh",
+    "zazuko-load": "ENDPOINT=http://data.zazuko.com/alod ./scripts/lindas-put-everything.sh"
   }
 }
